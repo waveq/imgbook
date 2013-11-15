@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="./resources/css/default.css" rel="stylesheet" type="text/css" />
+        <link href="./resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <title>IMAGE BOOK</title>
+    </h:head>
+
+    <h:body>
+        <div id="top_container" class="top_container">
+            <div id="top" class="top">
+                <ui:insert name="top">
+
+                    
+                    <h:form id="topButtons" >  
+
+                    <ul> 
+                        <li>
+                                <p:commandLink id="logoButton" action="#{navigationBean.redirectToIndex}" >    
+                                    <h:graphicImage library="images"  name="logoblack.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li> 
+                        <li>
+                                <p:commandLink  >    
+                                    <h:graphicImage library="images" name="hot.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li>
+                         <li>
+                                <p:commandLink id="logInButton" >    
+                                    <h:graphicImage library="images" name="login.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li>
+                        <li>
+                                <p:commandLink id="addButton" action="#{navigationBean.redirectToAddImage}" >    
+                                    <h:graphicImage library="images" name="add.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li>
+                       
+                        <li>
+                                <p:commandLink  >    
+                                    <h:graphicImage library="images" name="queue.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li> 
+                        <li>
+                                <p:commandLink id="signInButton" >
+                                    <h:graphicImage library="images" name="signin.png" width="50" height="50"/>
+                                </p:commandLink>
+                        </li>
+                    </ul>
+                        
+                    </h:form>
+                   
+
+                </ui:insert>
+            </div>
+        </div>
+
+        <div id="content" class="center_content">
+            <ui:insert name="content">Content</ui:insert>
+        </div>
+
+    </h:body>
+
+    <h:form id="signInPanelForm" >
+        <p:overlayPanel id="signUpPanel" for=":topButtons:signInButton" hideEffect="fade"> 
+            <h3>Tworzenie konta</h3>
+            <h:panelGrid columns="2" >
+                <p:outputLabel value="Login:" />
+                <p:inputText id="login" value="#{userBean.user.login}" required="true" />
+
+                <p:outputLabel value="Email:" />
+                <p:inputText id="email" value="#{userBean.user.email}" required="true" />
+
+                <h:outputLabel for="pwd1" value="Hasło:" />  
+                <p:password id="pwd1" value="#{userBean.user.password}" match="pwd2" label="Password 1" required="true"/>  
+
+                <h:outputLabel for="pwd2" value="Powtórz hasło:" />  
+                <p:password id="pwd2" value="#{userBean.user.password}" label="Password 2" required="true"/> 
+            </h:panelGrid>
+            <p:commandButton id="createAccountButton" action="#{userBean.create}" value="Stwórz konto" />
+                    <p:messages id="messages" showDetail="true" autoUpdate="true"/>  
+
+        </p:overlayPanel> 
+    </h:form>
+    
+    <h:form id="logInPanelForm" >
+        
+        
+        <p:overlayPanel id="logInPanel" for=":topButtons:logInButton" hideEffect="fade">
+        
+            <h:panelGroup id="LogInPanel-loggedOut" rendered="#{not userBean.loggedIn}">
+                <h3>Logowanie</h3>
+                <h:panelGrid columns="2" >
+                    <p:outputLabel value="Login:" />
+                    <p:inputText id="login" value="#{userBean.user.login}" required="true" />
+
+                    <p:outputLabel value="Hasło:" />
+                    <p:password id="password" value="#{userBean.user.password}" required="true" />
+                </h:panelGrid>
+                <p:commandButton action="#{userBean.doLogin}" id="logInButton" value="Zaloguj" />
+            </h:panelGroup>
+            <h:panelGroup id="LogInPanel-loggedIn" rendered="#{userBean.loggedIn}">
+                <h3>Jesteś zalogowany</h3>
+                <h:form id="logOut">
+                    <p:commandButton action="#{userBean.doLogout}"  id="logOutButton" value="Wyloguj" />
+                </h:form>
+            </h:panelGroup>
+        </p:overlayPanel>
+    </h:form>
+
+</html>

@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./mytemplate.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:p="http://primefaces.org/ui">
+
+
+
+    <ui:define name="content">
+        <ui:repeat var="image" value="#{imageBean.list}">
+            <h3>#{image.title} </h3>
+            <p style="background-color:red">Tutaj będzie obrazek pod tytułem [#{image.image}] :)</p>
+            <p>By: #{image.user.login} | Rating: #{image.rating}</p>
+        </ui:repeat>
+
+
+        <hr />
+
+
+    </ui:define>
+
+</ui:composition>
