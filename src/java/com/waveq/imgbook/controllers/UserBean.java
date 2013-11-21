@@ -42,13 +42,10 @@ public class UserBean {
     
     public String doLogin() {
         EntityManager em = DBManager.getManager().createEntityManager();
-   //     List<User> users = em.createQuery("SELECT u FROM User u").getResultList();
         List<User> userList = em.createNamedQuery("User.findAll").getResultList();
         // Set input login to lower case and delete whitespaces.
         user.setLogin(user.getLogin().toLowerCase().replaceAll("\\s", ""));
 
-
-        
         for (int  i = 0; i < userList.size(); i++) {
             if (userList.get(i).getLogin().equals(user.getLogin()) && userList.get(i).getPassword().equals(user.getPassword())) { 
                 this.user.setId(userList.get(i).getId());
@@ -57,11 +54,8 @@ public class UserBean {
                 loggedIn = true;
                 System.out.println("Zalogowano."+user.getId());
                 return "login-success";
-                
-            } else {
-            }
+            } else {}
         }
-
         // Set login ERROR
         em.close();
         FacesMessage msg = new FacesMessage("Błąd logowania!", "");
@@ -78,7 +72,6 @@ public class UserBean {
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "logout-success";
     }
-    
     
     public void addInformation(String s) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, s, ""));

@@ -18,12 +18,12 @@ import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
-
-
 /**
  *
  * @author Szymon
@@ -38,6 +38,11 @@ public class ImageBean {
     private String fileName;
     private Image image = new Image();
     private User injectedUser = new User();
+    
+    private StreamedContent obraz = new DefaultStreamedContent();
+    
+    private StreamedContent obrazek = new DefaultStreamedContent();
+    
 
     public ImageBean() {
     }
@@ -79,6 +84,14 @@ public class ImageBean {
             name = name.replace("(" + (count - 1) + ")", "(" + count + ")" + ext);
         }
         return name;
+    }
+    
+    public Image find(long id) {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        this.image = em.find(Image.class, id);
+        em.close();
+        
+        return image;
     }
 
     public void prepareImageToDisplay() {
@@ -129,9 +142,9 @@ public class ImageBean {
         }
     }
     
-    public List<User> getList() {
+    public List<Image> getList() {
         EntityManager em = DBManager.getManager().createEntityManager();
-        List list = em.createNamedQuery("Image.findAll").getResultList();
+        List<Image> list= em.createNamedQuery("Image.findAll").getResultList();
         em.close();
 
         return list;
@@ -168,5 +181,62 @@ public class ImageBean {
 
     public void setInjectedUser(User injectedUser) {
         this.injectedUser = injectedUser;
+    }
+    
+    
+
+    public StreamedContent getObraz() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> findAll = em.createNamedQuery("Image.findAll").getResultList();
+        String imgName = findAll.get(0).getImage();
+        
+        ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
+        String path = extContext.getRealPath("//resources//uploaded//" + imgName);
+        File file = new File(path);
+            InputStream stream;
+        try {
+            stream = new FileInputStream(file);
+            obraz = new DefaultStreamedContent(stream, "image/jpeg");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(ImageBean.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+        
+        return obraz;
+    }
+
+    public void setOneImage(StreamedContent obraz) {
+        this.obraz = obraz;
+    }
+
+    public StreamedContent getObrazek() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletRequest myRequest = (HttpServletRequest) context.getExternalContext().getRequest();
+        String imageID =  (String) myRequest.getParameter("imageID");
+  
+         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
+            return new DefaultStreamedContent();
+        }else {
+            Image pom = em.find(Image.class, Integer.parseInt(imageID)); 
+
+            String imgName = pom.getImage();
+
+            ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
+            String path = extContext.getRealPath("//resources//uploaded//" + imgName);
+            File file = new File(path);
+                InputStream stream;
+            try {
+                stream = new FileInputStream(file);
+                obrazek = new DefaultStreamedContent(stream, "image/jpeg");
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ImageBean.class.getName()).log(Level.SEVERE, null, ex);
+            }      
+            return obrazek;
+         }
+    }
+
+    public void setObrazek(StreamedContent obrazek) {
+        this.obrazek = obrazek;
     }
 }

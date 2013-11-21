@@ -12,7 +12,9 @@
     <ui:define name="content">
         <ui:repeat var="image" value="#{imageBean.list}">
             <h3>#{image.title} </h3>
-            <p style="background-color:red">Tutaj będzie obrazek pod tytułem [#{image.image}] :)</p>
+            <p:graphicImage value="#{imageBean.obrazek}" width="250px" height="200px"> 
+                <f:param name="imageID" value="#{image.id}" />
+            </p:graphicImage> 
             <p>By: #{image.user.login} | Rating: #{image.rating}</p>
         </ui:repeat>
 
