@@ -7,8 +7,8 @@
 
     <h:head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link href="./resources/css/default.css" rel="stylesheet" type="text/css" />
-        <link href="./resources/css/cssLayout.css" rel="stylesheet" type="text/css" />
+        <h:outputStylesheet library="css" name="cssLayout.css"/>
+        <h:outputStylesheet library="css" name="default.css"/>
         <title>IMAGE BOOK</title>
     </h:head>
 
@@ -17,46 +17,47 @@
             <div id="top" class="top">
                 <ui:insert name="top">
 
-                    
                     <h:form id="topButtons" >  
 
-                    <ul> 
-                        <li>
+                        <ul> 
+                            <li>
                                 <p:commandLink id="logoButton" action="#{navigationBean.redirectToIndex}" >    
                                     <h:graphicImage library="images"  name="logoblack.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li> 
-                        <li>
+                            </li> 
+                            <li>
                                 <p:commandLink  >    
                                     <h:graphicImage library="images" name="hot.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li>
-                         <li>
+                            </li>
+                            <li>
                                 <p:commandLink id="logInButton" >    
                                     <h:graphicImage library="images" name="login.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li>
-                        <li>
+                            </li>
+                            <li>
                                 <p:commandLink id="addButton" action="#{navigationBean.redirectToAddImage}" >    
                                     <h:graphicImage library="images" name="add.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li>
-                       
-                        <li>
+                            </li>
+
+                            <li>
                                 <p:commandLink  >    
                                     <h:graphicImage library="images" name="queue.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li> 
-                        <li>
+                            </li> 
+                            <li>
                                 <p:commandLink id="signInButton" >
                                     <h:graphicImage library="images" name="signin.png" width="50" height="50"/>
                                 </p:commandLink>
-                        </li>
-                    </ul>
-                        
+                            </li>
+                            <li>
+                                <h:panelGroup id="welcome-username" rendered="#{userBean.loggedIn}" >
+                                    <h3>Witaj #{userBean.user.login}</h3>
+                                </h:panelGroup>
+                            </li>
+                        </ul>
                     </h:form>
-                   
-
                 </ui:insert>
             </div>
         </div>
@@ -84,16 +85,16 @@
                 <p:password id="pwd2" value="#{userBean.user.password}" label="Password 2" required="true"/> 
             </h:panelGrid>
             <p:commandButton id="createAccountButton" action="#{userBean.create}" value="Stwórz konto" />
-                    <p:messages id="messages" showDetail="true" autoUpdate="true"/>  
+            <p:messages id="messages" showDetail="true" autoUpdate="true"/>  
 
         </p:overlayPanel> 
     </h:form>
-    
+
     <h:form id="logInPanelForm" >
-        
-        
+
+
         <p:overlayPanel id="logInPanel" for=":topButtons:logInButton" hideEffect="fade">
-        
+
             <h:panelGroup id="LogInPanel-loggedOut" rendered="#{not userBean.loggedIn}">
                 <h3>Logowanie</h3>
                 <h:panelGrid columns="2" >

@@ -40,6 +40,15 @@
         <param-value>6Ld7pMESAAAAAHd1VihJkqPUXAJVwU3Cghc8fzrq</param-value>
     </context-param>
     
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>com.waveq.imgbook.filters.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/loggedin/*</url-pattern>
+    </filter-mapping> 
+    
     <listener>
         <description>ServletContextListener</description>
         <listener-class>com.waveq.imgbook.listeners.ImgBookContextListener</listener-class>

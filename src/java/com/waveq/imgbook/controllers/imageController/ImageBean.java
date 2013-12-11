@@ -1,23 +1,27 @@
 package com.waveq.imgbook.controllers.imageController;
 
+import com.google.common.collect.Lists;
 import com.waveq.imgbook.config.DBManager;
-import com.waveq.imgbook.controllers.UserBean;
 import com.waveq.imgbook.entity.Image;
 import com.waveq.imgbook.entity.User;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.bean.SessionScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.persistence.EntityManager;
 import javax.servlet.http.HttpServletRequest;
@@ -28,34 +32,36 @@ import org.primefaces.model.StreamedContent;
  *
  * @author Szymon
  */
-public class ImageBean {
-    private static final long serialVersionUID = 1L;
+@ManagedBean(name="imageBean")
+@SessionScoped
+public class ImageBean implements Serializable {
 
+    @ManagedProperty(value="#{userBean.user}")
+    private User injectedUser;
+    
+    
     private static final int BUFFER_SIZE = 10124;
     private StreamedContent uploadedImage = new DefaultStreamedContent();
-
     private boolean uploaded;
-    private String fileName;
+    private String fileName; 
     private Image image = new Image();
-    private User injectedUser = new User();
+    private int page = 1;
     
-    private StreamedContent obraz = new DefaultStreamedContent();
-    
-    private StreamedContent obrazek = new DefaultStreamedContent();
-    
+
+    private StreamedContent oneImage = new DefaultStreamedContent();
+    private int passedId;
 
     public ImageBean() {
     }
 
     public String submit() {
         EntityManager em = DBManager.getManager().createEntityManager();
-        // this.user = em.find(User.class, injectedUser.getId());
-        
         Date date = new Date();
         image.setImage(fileName);
         image.setAddDate(date);
         image.setRating(0);
         image.setUser(getInjectedUser());
+        
         em.getTransaction().begin();
         image.setId(null);
         em.persist(image);
@@ -65,36 +71,30 @@ public class ImageBean {
         uploaded = false;
         return null;  
     }
+    
+     public void loadImage() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        this.image = em.find(Image.class, image.getId());
+        em.close();
+    }
+     
+    public List<Image> getIndexList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult(0).setMaxResults(5).getResultList(); 
+        em.close();
+        return list;
+    } 
+       
+    public List<Image> getList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult((page-1)*5).setMaxResults(5).getResultList(); 
+        em.close();
+        return list;
+    } 
 
     // Adding (0) (1) (2) substring to name of file
     // ext is extension of the file
-    private String changeName(int count, String name) {
-        String ext = "";
-        if (count == 0) {
-            if (name.indexOf(".") > 0) {
-                ext = name.substring(name.lastIndexOf("."), name.length());
-                name = name.substring(0, name.lastIndexOf("."));
-            }
-            name += " (" + count + ")" + ext;
-        } else {
-            if (name.indexOf(".") > 0) {
-                ext = name.substring(name.lastIndexOf("."), name.length());
-                name = name.substring(0, name.lastIndexOf("."));
-            }
-            name = name.replace("(" + (count - 1) + ")", "(" + count + ")" + ext);
-        }
-        return name;
-    }
-    
-    public Image find(long id) {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        this.image = em.find(Image.class, id);
-        em.close();
-        
-        return image;
-    }
-
-    public void prepareImageToDisplay() {
+    public StreamedContent prepareImageToDisplay(String fileName) {
         ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
         String path = extContext.getRealPath("//resources//uploaded//" + fileName);
         File file = new File(path);
@@ -102,9 +102,11 @@ public class ImageBean {
         try {
             stream = new FileInputStream(file);
             uploadedImage = new DefaultStreamedContent(stream, "image/jpeg");
+            return uploadedImage;
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ImageBean.class.getName()).log(Level.SEVERE, null, ex);
-        }  
+        }
+        return uploadedImage;
     }
 
     public void handleFileUpload(FileUploadEvent event) {
@@ -141,13 +143,39 @@ public class ImageBean {
             FacesContext.getCurrentInstance().addMessage(null, error);
         }
     }
-    
-    public List<Image> getList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list= em.createNamedQuery("Image.findAll").getResultList();
-        em.close();
-
-        return list;
+    private String changeName(int count, String name) {
+        String ext = "";
+        if (count == 0) {
+            if (name.indexOf(".") > 0) {
+                ext = name.substring(name.lastIndexOf("."), name.length());
+                name = name.substring(0, name.lastIndexOf("."));
+            }
+            name += " (" + count + ")" + ext;
+        } else {
+            if (name.indexOf(".") > 0) {
+                ext = name.substring(name.lastIndexOf("."), name.length());
+                name = name.substring(0, name.lastIndexOf("."));
+            }
+            name = name.replace("(" + (count - 1) + ")", "(" + count + ")" + ext);
+        }
+        return name;
+    }
+ 
+      public StreamedContent getImgToRepeat() {    
+        FacesContext context = FacesContext.getCurrentInstance();
+        if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
+            // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
+            return new DefaultStreamedContent();
+        } else {
+            HttpServletRequest myRequest = (HttpServletRequest) context.getExternalContext().getRequest();
+            String imageID =  (String) myRequest.getParameter("imageID");
+            
+            EntityManager em = DBManager.getManager().createEntityManager();  
+            
+            image = em.find(Image.class, Integer.parseInt(imageID));
+            em.close();
+            return prepareImageToDisplay(image.getImage());
+        }
     }
 
     public boolean isUploaded() {
@@ -159,12 +187,7 @@ public class ImageBean {
     }
 
     public StreamedContent getUploadedImage() {
-        prepareImageToDisplay();
-        return uploadedImage;             
-    }
-
-    public void setUploadedImage(StreamedContent uploadedImage) {
-        this.uploadedImage = uploadedImage;
+        return prepareImageToDisplay(fileName);         
     }
 
     public Image getImage() {
@@ -182,61 +205,35 @@ public class ImageBean {
     public void setInjectedUser(User injectedUser) {
         this.injectedUser = injectedUser;
     }
-    
-    
 
-    public StreamedContent getObraz() {
+    public StreamedContent getOneImage() {
+            EntityManager em = DBManager.getManager().createEntityManager();       
+            this.image = em.find(Image.class, image.getId());
+            em.close();
+            return prepareImageToDisplay(image.getImage());
+    }
+
+    public void setOneImage(StreamedContent oneImage) {
+        this.oneImage = oneImage;
+    }
+
+    public int getPassedId() {
+        return passedId;
+    }
+
+    public void setPassedId(int passedId) {
         EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> findAll = em.createNamedQuery("Image.findAll").getResultList();
-        String imgName = findAll.get(0).getImage();
-        
-        ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
-        String path = extContext.getRealPath("//resources//uploaded//" + imgName);
-        File file = new File(path);
-            InputStream stream;
-        try {
-            stream = new FileInputStream(file);
-            obraz = new DefaultStreamedContent(stream, "image/jpeg");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(ImageBean.class.getName()).log(Level.SEVERE, null, ex);
-        }  
-        
-        return obraz;
+        this.image = em.find(Image.class, passedId);
+        em.close();
     }
 
-    public void setOneImage(StreamedContent obraz) {
-        this.obraz = obraz;
+    public int getPage() {
+        return page;
     }
 
-    public StreamedContent getObrazek() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        FacesContext context = FacesContext.getCurrentInstance();
-        HttpServletRequest myRequest = (HttpServletRequest) context.getExternalContext().getRequest();
-        String imageID =  (String) myRequest.getParameter("imageID");
-  
-         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
-            // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
-            return new DefaultStreamedContent();
-        }else {
-            Image pom = em.find(Image.class, Integer.parseInt(imageID)); 
-
-            String imgName = pom.getImage();
-
-            ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
-            String path = extContext.getRealPath("//resources//uploaded//" + imgName);
-            File file = new File(path);
-                InputStream stream;
-            try {
-                stream = new FileInputStream(file);
-                obrazek = new DefaultStreamedContent(stream, "image/jpeg");
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(ImageBean.class.getName()).log(Level.SEVERE, null, ex);
-            }      
-            return obrazek;
-         }
+    public void setPage(int page) {
+        this.page = page;
     }
 
-    public void setObrazek(StreamedContent obrazek) {
-        this.obrazek = obrazek;
-    }
+
 }

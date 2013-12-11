@@ -1,0 +1,87 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./mytemplate.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+    
+      <f:metadata>
+        <f:viewParam name="page" value="#{imageBean.page}"/>
+    </f:metadata>
+
+    <ui:define name="content">
+        <ui:repeat var="image" value="#{imageBean.list}">
+
+            <h:panelGroup id="imageInRepeat" >
+
+                <p:outputLabel value="#{image.title}" styleClass="title" />
+                <h:form>
+                    <h:commandLink 
+                        action="image?faces-redirect=true&amp;includeViewParams=true" >
+                        <f:setPropertyActionListener target="#{imageBean.passedId}" value="#{image.id}" />
+                        <f:setPropertyActionListener target="#{commentBean.passedImageId}" value="#{image.id}" />
+                        <p:graphicImage value="#{imageBean.imgToRepeat}" cache="false" width="500px" height="400px"> 
+                            <f:param name="imageID" value="#{image.id}" />
+                        </p:graphicImage> 
+                    </h:commandLink>
+                </h:form>
+                <h:form id="rating-form">
+                    <p:outputLabel value="Dodano przez: " style="font-size: 15px;" /> 
+                    <p:outputLabel value="#{image.user.login} " style="font-size: 15px; color: blue; font-weight : bold;" />
+                    <p:commandLink value="Słabe" styleClass="minus" action="#{ratingBean.rate}" update="rating-form" actionListener="#{ratingBean.ratingListener}" >
+                        <f:param name="imageID" value="#{image.id}" />
+                        <f:param name="plusOrMinus" value="-" />
+                    </p:commandLink> 
+
+                    <p:outputLabel value="#{image.rating}" style="font-weight : bold; font-size: 20px;"  />
+
+                    <p:commandLink value="Zajebiste" styleClass="plus" action="#{ratingBean.rate}" update="rating-form" actionListener="#{ratingBean.ratingListener}" >
+                        <f:param name="imageID" value="#{image.id}" />
+                        <f:param name="plusOrMinus" value="+" />
+                    </p:commandLink> 
+                    <p:messages id="messages" showDetail="true" closable="true" />  
+                </h:form>
+                <hr />
+            </h:panelGroup>
+        </ui:repeat>
+        
+        <!-- page buttons -->
+         <h:form>
+            <h:commandLink value="1" action="index.xhtml" 
+                           style="font-size: 15px; color: black;
+                           font-weight: bold; background-color: orange;
+                           margin: 2px;" />
+            <h:commandLink value="2" 
+                           style="font-size: 15px; color: black;
+                           font-weight: bold; background-color: orange;
+                           margin: 2px;"
+                           action="page?faces-redirect=true&amp;includeViewParams=true" >
+                <f:setPropertyActionListener target="#{imageBean.page}" value="#{2}" />
+            </h:commandLink>
+            <h:commandLink value="3"
+                           style="font-size: 15px; color: black;
+                           font-weight: bold; background-color: orange;
+                           margin: 2px;"
+                           action="page?faces-redirect=true&amp;includeViewParams=true" >
+                <f:setPropertyActionListener target="#{imageBean.page}" value="#{3}" />
+            </h:commandLink>
+            <h:commandLink value="4"
+                           style="font-size: 15px; color: black;
+                           font-weight: bold; background-color: orange;
+                           margin: 2px;"
+                           action="page?faces-redirect=true&amp;includeViewParams=true" >
+                <f:setPropertyActionListener target="#{imageBean.page}" value="#{4}" />
+            </h:commandLink>
+            <h:commandLink value="5"
+                           style="font-size: 15px; color: black;
+                           font-weight: bold; background-color: orange;
+                           margin: 2px;"
+                           action="page?faces-redirect=true&amp;includeViewParams=true" >
+                <f:setPropertyActionListener target="#{imageBean.page}" value="#{5}" />
+            </h:commandLink>
+        </h:form>
+
+    </ui:define>
+</ui:composition>

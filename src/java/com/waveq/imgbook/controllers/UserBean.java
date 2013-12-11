@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.waveq.imgbook.controllers;
 
 import java.util.List;
@@ -10,12 +6,18 @@ import javax.faces.context.FacesContext;
 import javax.persistence.EntityManager;
 import com.waveq.imgbook.config.DBManager;
 import com.waveq.imgbook.entity.User;
+import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
 /**
  *
  * @author Szymon
  */
-public class UserBean {
-    private static final long serialVersionUID = 1L;
+
+@ManagedBean(name="userBean")
+@SessionScoped
+public class UserBean implements Serializable {
     
     private User user = new User();
     private boolean loggedIn = false;
@@ -52,7 +54,7 @@ public class UserBean {
                 this.user = em.find(User.class, user.getId());
                 em.close();
                 loggedIn = true;
-                System.out.println("Zalogowano."+user.getId());
+                addInformation("Zalogowano");
                 return "login-success";
             } else {}
         }
@@ -67,7 +69,7 @@ public class UserBean {
     
     public String doLogout() {
         loggedIn = false;
-        System.out.println("Wylogowano.");
+        addInformation("Wylogowano");
         // clearing session
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "logout-success";

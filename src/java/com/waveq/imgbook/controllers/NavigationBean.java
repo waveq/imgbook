@@ -4,16 +4,27 @@
  */
 package com.waveq.imgbook.controllers;
 
+import java.io.Serializable;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+import javax.faces.bean.SessionScoped;
+
 /**
  *
  * @author Szymon
  */
-public class NavigationBean {
+
+@ManagedBean(name="navigationBean")
+@RequestScoped
+public class NavigationBean implements Serializable {
     
     public String redirectToAddImage() {
         return "addimage";
     }
     public String redirectToIndex() {
+        return "index";
+    }
+    public String redirectToOneImage() {
         return "index";
     }
 }

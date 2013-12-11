@@ -16,14 +16,23 @@ h1 {
     color: #D20005;
 }
 
+.title {
+    font-family: Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
+    font-size:  20px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px;
+    color: #0000cc;
+}
+
 a:link, a:visited {
-  color: #045491;
+  color: white;
   font-weight : bold;
   text-decoration: none;
 }
 
 a:link:hover, a:visited:hover  {
-  color: #045491;
+  color: black;
   font-weight : bold;
-  text-decoration : underline;
+  text-decoration : none;
 }

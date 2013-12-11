@@ -5,8 +5,8 @@
 package com.waveq.imgbook.entity;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
-import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "image")
 @NamedQueries({
+    @NamedQuery(name = "Image.findAllOrderByDateDESC", query = "SELECT i FROM Image i ORDER BY i.addDate desc"),
     @NamedQuery(name = "Image.findAll", query = "SELECT i FROM Image i"),
     @NamedQuery(name = "Image.findById", query = "SELECT i FROM Image i WHERE i.id = :id"),
     @NamedQuery(name = "Image.findByImage", query = "SELECT i FROM Image i WHERE i.image = :image"),
@@ -64,7 +65,9 @@ public class Image implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private User user;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "image", fetch = FetchType.EAGER)
-    private Set<Comment> commentSet;
+    private Collection<Rating> ratingCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "image", fetch = FetchType.EAGER)
+    private Collection<Comment> commentCollection;
 
     public Image() {
     }
@@ -129,12 +132,20 @@ public class Image implements Serializable {
         this.user = user;
     }
 
-    public Set<Comment> getCommentSet() {
-        return commentSet;
+    public Collection<Rating> getRatingCollection() {
+        return ratingCollection;
     }
 
-    public void setCommentSet(Set<Comment> commentSet) {
-        this.commentSet = commentSet;
+    public void setRatingCollection(Collection<Rating> ratingCollection) {
+        this.ratingCollection = ratingCollection;
+    }
+
+    public Collection<Comment> getCommentCollection() {
+        return commentCollection;
+    }
+
+    public void setCommentCollection(Collection<Comment> commentCollection) {
+        this.commentCollection = commentCollection;
     }
 
     @Override

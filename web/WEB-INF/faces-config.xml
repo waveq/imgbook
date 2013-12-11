@@ -5,7 +5,7 @@
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 
     
-    <!-- BEANS -->
+ <!-- BEANS -->  <!-- 
     <managed-bean>
         <managed-bean-name>userBean</managed-bean-name>
         <managed-bean-class>com.waveq.imgbook.controllers.UserBean</managed-bean-class>
@@ -21,11 +21,34 @@
         </managed-property>
     </managed-bean>
     <managed-bean>
+        <managed-bean-name>commentBean</managed-bean-name>
+        <managed-bean-class>com.waveq.imgbook.controllers.CommentBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+        <managed-property>
+            <property-name>injectedUser</property-name>
+            <value>#{userBean.user}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>ratingBean</managed-bean-name>
+        <managed-bean-class>com.waveq.imgbook.controllers.RatingBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>injectedUser</property-name>
+            <value>#{userBean.user}</value>
+        </managed-property>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>imageStreamer</managed-bean-name>
+        <managed-bean-class>com.waveq.imgbook.controllers.ImageStreamer</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
         <managed-bean-name>navigationBean</managed-bean-name>
         <managed-bean-class>com.waveq.imgbook.controllers.NavigationBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
-    
+    -->
     
     <!-- NAVIGATION RULES -->
     <navigation-rule>
@@ -33,7 +56,7 @@
         <navigation-case>
             <from-action>#{navigationBean.redirectToAddImage}</from-action>
             <from-outcome>addimage</from-outcome>
-            <to-view-id>/addimage.xhtml</to-view-id>
+            <to-view-id>/loggedin/addimage.xhtml</to-view-id>
             <redirect />
         </navigation-case>
         <navigation-case>

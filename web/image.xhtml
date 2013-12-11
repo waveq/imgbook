@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./mytemplate.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <f:viewParam name="imageID" value="#{imageBean.image.id}"/>
+    </f:metadata>
+    
+    <ui:define name="content">      
+        <h:outputLabel value="#{imageBean.image.title}" styleClass="title" /><br/>
+        <p:graphicImage cache="false" value="#{imageBean.oneImage}" width="500px" height="400px" /> 
+        
+        <h:form id="rating-form">
+            <p:outputLabel value="Dodano przez: " style="font-size: 15px;" /> 
+            <p:outputLabel value="#{imageBean.image.user.login} " style="font-size: 15px; color: blue; font-weight : bold;" />
+            <p:commandLink styleClass="minus" value="Słabe" action="#{ratingBean.rate}" update="rating-form" actionListener="#{ratingBean.ratingListener}" >
+                <f:param name="imageID" value="#{imageBean.image.id}" />
+                <f:param name="plusOrMinus" value="-"  />
+            </p:commandLink> 
+            
+            <p:outputLabel value="#{imageBean.image.rating}" style="font-weight : bold; font-size: 20px;"  />
+            
+            <p:commandLink styleClass="plus"  value="Zajebiste" action="#{ratingBean.rate}" update="rating-form" actionListener="#{ratingBean.ratingListener}" >
+                <f:param name="imageID" value="#{imageBean.image.id}" />
+                <f:param name="plusOrMinus" value="+" />
+            </p:commandLink> 
+            <p:messages id="messages" showDetail="true" closable="true" />  
+        </h:form>
+
+    <h:form id="comment-form">
+        <h1>KOMENTARZE:</h1>
+        
+        <ui:repeat var="comment" value="#{commentBean.list}" >
+            <h3>#{comment.content} </h3>
+            Dodano przez: #{comment.user.login} Data dodania: #{comment.addDate}
+            <hr />
+        </ui:repeat>
+
+
+
+        <p:messages    showDetail="true" closable="true" />
+        <h:panelGrid rendered="#{userBean.loggedIn}" columns="1">
+            <h1>Dodaj komentarz</h1>
+                <p:inputTextarea id="comment" value="#{commentBean.comment.content}" required="true" rows="6" cols="50" />  
+                <p:commandButton id="add-comment-button" value="Dodaj komentarz" update="comment-form" action="#{commentBean.addComment}" />
+        </h:panelGrid>
+        
+        <h:panelGroup rendered="#{not userBean.loggedIn}" >
+            <h1>Zaloguj się by móc dodawać komentarze. </h1>
+        </h:panelGroup>
+    </h:form>
+
+
+</ui:define>
+
+</ui:composition>

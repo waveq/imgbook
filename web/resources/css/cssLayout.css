@@ -43,6 +43,25 @@
     width: 150px;
 }
 
+.button {
+    background-color: yellow;
+}
+
+.plus {
+    margin: 0;
+    padding: 0;
+    background-color: green;
+    font-size: 20px;
+}
+
+.minus {
+    margin: 0;
+    padding: 0;
+    background-color: red;
+    font-size: 20px;
+}
+
+
 .center_content {
     background-color: #dddddd;
     padding-top: 50px;
