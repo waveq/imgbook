@@ -12,9 +12,10 @@
     </f:metadata>
     
     <ui:define name="content">      
+        <h:form>
         <h:outputLabel value="#{imageBean.image.title}" styleClass="title" /><br/>
         <p:graphicImage cache="false" value="#{imageBean.oneImage}" width="500px" height="400px" /> 
-        
+        </h:form>
         <h:form id="rating-form">
             <p:outputLabel value="Dodano przez: " style="font-size: 15px;" /> 
             <p:outputLabel value="#{imageBean.image.user.login} " style="font-size: 15px; color: blue; font-weight : bold;" />
