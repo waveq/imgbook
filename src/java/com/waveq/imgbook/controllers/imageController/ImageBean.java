@@ -2,7 +2,9 @@ package com.waveq.imgbook.controllers.imageController;
 
 import com.google.common.collect.Lists;
 import com.waveq.imgbook.config.DBManager;
+import com.waveq.imgbook.entity.Comment;
 import com.waveq.imgbook.entity.Image;
+import com.waveq.imgbook.entity.Rating;
 import com.waveq.imgbook.entity.User;
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,6 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -54,6 +58,34 @@ public class ImageBean implements Serializable {
     public ImageBean() {
     }
 
+    public void imageListener(ActionEvent ae) {
+        String ids = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("imageID").toString();
+        int id = Integer.parseInt(ids);
+        this.image.setId(id);
+    }
+    
+    public String promoteToMain() {
+         this.loadImage();
+         Date date = new Date();
+         image.setMainDate(date);
+         EntityManager em = DBManager.getManager().createEntityManager();
+         em.getTransaction().begin();
+         em.merge(this.image);
+         em.getTransaction().commit();
+         em.close();
+         return null;
+    }
+    
+     public String delete() {
+        this.loadImage();
+        EntityManager em = DBManager.getManager().createEntityManager();
+        em.getTransaction().begin();
+        em.remove(em.merge(this.image));
+        em.getTransaction().commit();
+        em.close();
+        return null;
+    }
+    
     public String submit() {
         EntityManager em = DBManager.getManager().createEntityManager();
         Date date = new Date();
@@ -72,25 +104,63 @@ public class ImageBean implements Serializable {
         return null;  
     }
     
+ 
+    
      public void loadImage() {
         EntityManager em = DBManager.getManager().createEntityManager();
         this.image = em.find(Image.class, image.getId());
         em.close();
     }
      
-    public List<Image> getIndexList() {
+     public void clearBean() {
+         this.image = new Image();
+     }
+     
+      public List<Image> getMainFirstPageList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllOrderByMainDateDESC").setFirstResult(0).setMaxResults(5).getResultList(); 
+        em.close();
+        return list;
+    } 
+      
+      public List<Image> getMainNotFirstPageList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllOrderByMainDateDESC").setFirstResult((page-1)*5).setMaxResults(5).getResultList(); 
+        em.close();
+        return list;
+    } 
+     
+    public List<Image> getQueueFirstPageList() {
         EntityManager em = DBManager.getManager().createEntityManager();
         List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult(0).setMaxResults(5).getResultList(); 
         em.close();
         return list;
     } 
-       
-    public List<Image> getList() {
+    
+    public List<Image> getQueueNotFirstPageList() {
         EntityManager em = DBManager.getManager().createEntityManager();
         List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult((page-1)*5).setMaxResults(5).getResultList(); 
         em.close();
         return list;
     } 
+       
+   
+    
+    public List<Image> getSimpleQueueList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllQueue").getResultList(); 
+        em.close();
+        return list;
+    }
+    
+     public List<Image> getSimpleMainList() {
+        EntityManager em = DBManager.getManager().createEntityManager();
+        List<Image> list = em.createNamedQuery("Image.findAllMain").getResultList(); 
+        em.close();
+        return list;
+    }
+     
+     
 
     // Adding (0) (1) (2) substring to name of file
     // ext is extension of the file

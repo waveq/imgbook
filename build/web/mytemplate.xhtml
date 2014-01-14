@@ -18,42 +18,41 @@
                 <ui:insert name="top">
 
                     <h:form id="topButtons" >  
+                           <p:growl id="growl" life="4000"/> 
 
                         <ul> 
                             <li>
-                                <p:commandLink id="logoButton" action="#{navigationBean.redirectToIndex}" >    
-                                    <h:graphicImage library="images"  name="logoblack.png" width="50" height="50"/>
-                                </p:commandLink>
+                                <p:commandLink value="ImageBook" id="logoButton" action="#{navigationBean.redirectToIndex}" />    
                             </li> 
                             <li>
-                                <p:commandLink  >    
-                                    <h:graphicImage library="images" name="hot.png" width="50" height="50"/>
-                                </p:commandLink>
-                            </li>
-                            <li>
-                                <p:commandLink id="logInButton" >    
-                                    <h:graphicImage library="images" name="login.png" width="50" height="50"/>
-                                </p:commandLink>
-                            </li>
-                            <li>
-                                <p:commandLink id="addButton" action="#{navigationBean.redirectToAddImage}" >    
-                                    <h:graphicImage library="images" name="add.png" width="50" height="50"/>
-                                </p:commandLink>
+                                <p:commandLink value="HOT" action="index?faces-redirect=true" />    
                             </li>
 
                             <li>
-                                <p:commandLink  >    
-                                    <h:graphicImage library="images" name="queue.png" width="50" height="50"/>
-                                </p:commandLink>
-                            </li> 
+                                <p:commandLink value="DODAJ" id="addButton" action="#{navigationBean.redirectToAddImage}" 
+                                               actionListener="#{imageBean.clearBean}" />    
+                            </li>
+
                             <li>
-                                <p:commandLink id="signInButton" >
-                                    <h:graphicImage library="images" name="signin.png" width="50" height="50"/>
-                                </p:commandLink>
+                                <p:commandLink value="KOLEJKA" id="queueButton" action="#{navigationBean.redirectToQueue}" />    
+                            </li> 
+                            <h:panelGroup id="login" rendered="#{not userBean.loggedIn}" >
+                                <li>
+                                    <p:commandLink id="logInButton" value="ZALOGUJ" />    
+                                </li>
+                            </h:panelGroup>
+                            <li>
+                                <h:panelGroup id="signIn" rendered="#{not userBean.loggedIn}" >
+                                    <p:commandLink id="signInButton" value="REJESTRACJA"/>
+                                </h:panelGroup>
+
+                                <h:form id="logOut" rendered="#{userBean.loggedIn}">
+                                    <p:commandLink  action="#{userBean.doLogout}" id="logoutButton" value="WYLOGUJ" />
+                                </h:form>
                             </li>
                             <li>
                                 <h:panelGroup id="welcome-username" rendered="#{userBean.loggedIn}" >
-                                    <h3>Witaj #{userBean.user.login}</h3>
+                                    WITAJ #{userBean.user.login}
                                 </h:panelGroup>
                             </li>
                         </ul>
@@ -65,52 +64,46 @@
         <div id="content" class="center_content">
             <ui:insert name="content">Content</ui:insert>
         </div>
+        
+        <div id="bottom">
+            <ui:insert name="bottom">CREATED BY SZYMON REKAWEK</ui:insert>
+        </div>
 
     </h:body>
 
     <h:form id="signInPanelForm" >
-        <p:overlayPanel id="signUpPanel" for=":topButtons:signInButton" hideEffect="fade"> 
+        <p:overlayPanel id="signUpPanel" styleClass="loginSignPanel" for=":topButtons:signInButton" hideEffect="fade"> 
             <h3>Tworzenie konta</h3>
             <h:panelGrid columns="2" >
-                <p:outputLabel value="Login:" />
+                <p:outputLabel styleClass="inPanelLabel" value="Login:" />
                 <p:inputText id="login" value="#{userBean.user.login}" required="true" />
 
-                <p:outputLabel value="Email:" />
+                <p:outputLabel styleClass="inPanelLabel" value="Email:" />
                 <p:inputText id="email" value="#{userBean.user.email}" required="true" />
 
-                <h:outputLabel for="pwd1" value="Hasło:" />  
+                <p:outputLabel styleClass="inPanelLabel" for="pwd1" value="Hasło:" />  
                 <p:password id="pwd1" value="#{userBean.user.password}" match="pwd2" label="Password 1" required="true"/>  
 
-                <h:outputLabel for="pwd2" value="Powtórz hasło:" />  
+                <p:outputLabel styleClass="inPanelLabel" for="pwd2" value="Powtórz hasło:" />  
                 <p:password id="pwd2" value="#{userBean.user.password}" label="Password 2" required="true"/> 
             </h:panelGrid>
-            <p:commandButton id="createAccountButton" action="#{userBean.create}" value="Stwórz konto" />
-            <p:messages id="messages" showDetail="true" autoUpdate="true"/>  
-
+            <p:commandButton styleClass="inPanelButton" ajax="false" id="createAccountButton" action="#{userBean.create}" value="Stwórz konto" />
         </p:overlayPanel> 
     </h:form>
 
     <h:form id="logInPanelForm" >
-
-
-        <p:overlayPanel id="logInPanel" for=":topButtons:logInButton" hideEffect="fade">
+        <p:overlayPanel id="logInPanel" styleClass="loginSignPanel" for=":topButtons:logInButton" hideEffect="fade">
 
             <h:panelGroup id="LogInPanel-loggedOut" rendered="#{not userBean.loggedIn}">
                 <h3>Logowanie</h3>
                 <h:panelGrid columns="2" >
-                    <p:outputLabel value="Login:" />
+                    <p:outputLabel styleClass="inPanelLabel" value="Login:" />
                     <p:inputText id="login" value="#{userBean.user.login}" required="true" />
 
-                    <p:outputLabel value="Hasło:" />
+                    <p:outputLabel styleClass="inPanelLabel" value="Hasło:" />
                     <p:password id="password" value="#{userBean.user.password}" required="true" />
                 </h:panelGrid>
-                <p:commandButton action="#{userBean.doLogin}" id="logInButton" value="Zaloguj" />
-            </h:panelGroup>
-            <h:panelGroup id="LogInPanel-loggedIn" rendered="#{userBean.loggedIn}">
-                <h3>Jesteś zalogowany</h3>
-                <h:form id="logOut">
-                    <p:commandButton action="#{userBean.doLogout}"  id="logOutButton" value="Wyloguj" />
-                </h:form>
+                <p:commandButton action="#{userBean.doLogin}"  ajax="false" id="logInButton" value="Zaloguj" />
             </h:panelGroup>
         </p:overlayPanel>
     </h:form>

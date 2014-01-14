@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                template="./mytemplate.xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        
+        <h1>KOLEJKA:</h1>
+        <ui:repeat var="image" value="#{imageBean.queueFirstPageList}">
+
+            <div id="bookBox" class="bookBox" >
+                <h:panelGroup id="imageInRepeat" >
+                    <div id="titleBox" class="titleBox" >
+                        <h:form style="margin:0; padding:0;">
+                            <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
+                            <p:commandLink styleClass="commentButton" 
+                                           action="image?faces-redirect=true&amp;includeViewParams=true" >
+                                <f:setPropertyActionListener target="#{imageBean.passedId}" value="#{image.id}" />
+                                <f:setPropertyActionListener target="#{commentBean.passedImageId}" value="#{image.id}" />
+                            </p:commandLink> 
+                        </h:form>
+
+                    </div>
+                    <div id="imageBox" class="imageBox" >
+                        <h:form style="margin:0; padding:0;">
+                            <h:commandLink 
+                                action="image?faces-redirect=true&amp;includeViewParams=true" >
+                                <f:setPropertyActionListener target="#{imageBean.passedId}" value="#{image.id}" />
+                                <f:setPropertyActionListener target="#{commentBean.passedImageId}" value="#{image.id}" />
+                                <p:graphicImage value="#{imageBean.imgToRepeat}" cache="false" width="500px" height="400px"> 
+                                    <f:param name="imageID" value="#{image.id}" />
+                                </p:graphicImage> 
+                            </h:commandLink>
+                        </h:form>
+                    </div>
+                    <div id="ratingBox" class="ratingBox" >
+                        <h:form id="rating-form">
+                            <p:growl id="growl" life="4000"/> 
+                            <li>
+                                <p:commandLink styleClass="plus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      
+                                    <f:param name="imageID" value="#{image.id}" />
+                                    <f:param name="plusOrMinus" value="+" />
+                                </p:commandLink> 
+                            </li>
+                            <li>
+                                <p:commandLink styleClass="minus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      
+                                    <f:param name="imageID" value="#{image.id}" />
+                                    <f:param name="plusOrMinus" value="-" />
+                                </p:commandLink> 
+                            </li>
+                            <li>
+                                <p:commandLink styleClass="facebook"  >
+                                </p:commandLink> 
+                            </li>
+                        </h:form>
+                    </div>
+                    <div id="authorBox" class="authorBox" >
+                        <p:outputLabel value="#{image.title}" styleClass="imageTitle" />
+                        <p:outputLabel value="Dodano przez: #{image.user.login}" styleClass="imageDescription" /> 
+                        <p:outputLabel value="#{image.addDate}" styleClass="imageDescription" >
+                            <f:convertDateTime type="date" pattern="dd-MM-yyyy" />
+                        </p:outputLabel>
+                    </div>
+                </h:panelGroup>
+            </div>
+
+        <!-- admin tools -->
+            <h:form id="promoteToMain" >
+                <p:commandButton value="Główna" ajax="false" action="#{imageBean.promoteToMain}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+                <p:commandButton value="Usuń" ajax="false" action="#{imageBean.delete}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+            </h:form>
+        </ui:repeat>
+
+        <!-- page buttons -->
+        <div id="pageButtonBox" class="pageButtonBox" >
+            <h:form>
+                <ui:repeat var="page" value="#{pageBean.queuePageList}">
+
+                    <h:commandLink value="#{page.number}" styleClass="pageButton"  action="pageQueue?faces-redirect=true&amp;includeViewParams=true" >
+                        <f:setPropertyActionListener target="#{imageBean.page}" value="#{page.number}" />
+                    </h:commandLink>
+
+                </ui:repeat>
+            </h:form>
+        </div>
+
+
+
+
+    </ui:define>
+</ui:composition>

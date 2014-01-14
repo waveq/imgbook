@@ -27,12 +27,8 @@ public class CommentBean implements Serializable {
 
     @ManagedProperty(value="#{userBean.user}")
     private User injectedUser;
-    
     private Comment comment = new Comment();
     private Image image = new Image();
-    
-
-   
     private int passedImageId;
     private int userID;
 
@@ -52,6 +48,10 @@ public class CommentBean implements Serializable {
         Date date = new Date();
         
         EntityManager em = DBManager.getManager().createEntityManager();
+        System.out.println("Passed image: "+ passedImageId);
+        System.out.println("Passed user: "+ injectedUser);
+        System.out.println("Date: " + date);
+        System.out.println("Comment content" + comment.getContent());
         
         this.image = em.find(Image.class, passedImageId);
 
@@ -63,37 +63,20 @@ public class CommentBean implements Serializable {
         comment.setId(null);
         em.persist(comment);
         em.getTransaction().commit();
-        this.addInformation("Dodano komentarz");
+        this.addGrowl("Dodano komentarz", "");
         em.close();
         this.comment = new Comment();
         return null;
     }
-/*
-    public String delete() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        em.getTransaction().begin();
-        this.sign = em.find(Sign.class, sign.getId());
-        em.remove(this.sign);
-        this.sign = new Sign();
-        em.getTransaction().commit();
-        em.close();
-        this.addGrowl("Sukces!", "Wypisano użytkownika.");
-        return null;
-    }
 
-    public void signListener(ActionEvent ae) {
-        String ids = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("signID").toString();
-        int id = Integer.parseInt(ids);
-        this.sign.setId(id);
-    }
-*/
+    
+    
     public void addInformation(String s) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, s, ""));
     }
 
     public void addGrowl(String title, String content) {
         FacesContext context = FacesContext.getCurrentInstance();
-
         context.addMessage(null, new FacesMessage(title, content));
     }
 

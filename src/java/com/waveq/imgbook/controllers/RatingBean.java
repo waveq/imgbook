@@ -50,7 +50,7 @@ public class RatingBean implements Serializable {
         EntityManager em = DBManager.getManager().createEntityManager();
         
         if(injectedUser.getId() == null) {
-            addInformation("Najpierw musisz się zalogować");
+            this.addGrowl("Najpierw musisz się zalogować","");
             em.close();
             return null;
         }
@@ -72,7 +72,6 @@ public class RatingBean implements Serializable {
                 this.image.setRating(image.getRating()+1);
             }
             em.getTransaction().begin();
-            System.out.println("Dodaje rating do obrazka "+this.image.getTitle());
             em.merge(this.image);
             em.getTransaction().commit();
             
@@ -86,14 +85,19 @@ public class RatingBean implements Serializable {
             em.close();
             this.rating = new Rating();
             this.image = new Image();    
-            this.addInformation("Dzięki ");
+            this.addGrowl("Dzięki","");
             
             return null;
         } else {
-            this.addInformation("Już głosowałeś na ten obrazek");
+            this.addGrowl("Już głosowałeś na ten obrazek","");
         }
         em.close();
         return null;
+    }
+    
+     public void addGrowl(String title, String content) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        context.addMessage(null, new FacesMessage(title, content));
     }
     
     public void addInformation(String s) {

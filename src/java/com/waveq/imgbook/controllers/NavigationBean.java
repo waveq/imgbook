@@ -27,4 +27,7 @@ public class NavigationBean implements Serializable {
     public String redirectToOneImage() {
         return "index";
     }
+     public String redirectToQueue() {
+        return "queue";
+    }
 }

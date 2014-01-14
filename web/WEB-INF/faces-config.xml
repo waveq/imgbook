@@ -77,6 +77,12 @@
             <to-view-id>/index.xhtml</to-view-id>
             <redirect />
         </navigation-case>
-    </navigation-rule>
+        <navigation-case>
+            <from-action>#{navigationBean.redirectToQueue}</from-action>
+            <from-outcome>queue</from-outcome>
+            <to-view-id>/queue.xhtml</to-view-id>
+            <redirect />
+        </navigation-case>
+    </navigation-rule> 
     
 </faces-config>

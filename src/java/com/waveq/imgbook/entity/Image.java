@@ -32,7 +32,10 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "image")
 @NamedQueries({
-    @NamedQuery(name = "Image.findAllOrderByDateDESC", query = "SELECT i FROM Image i ORDER BY i.addDate desc"),
+    @NamedQuery(name = "Image.findAllQueue", query = "SELECT i FROM Image i WHERE i.mainDate IS NULL"),
+    @NamedQuery(name = "Image.findAllMain", query = "SELECT i FROM Image i WHERE i.mainDate IS NOT NULL"),
+    @NamedQuery(name = "Image.findAllOrderByMainDateDESC", query = "SELECT i FROM Image i WHERE i.mainDate IS NOT NULL ORDER BY i.mainDate desc"),
+    @NamedQuery(name = "Image.findAllOrderByDateDESC", query = "SELECT i FROM Image i WHERE i.mainDate IS NULL ORDER BY i.addDate desc"),
     @NamedQuery(name = "Image.findAll", query = "SELECT i FROM Image i"),
     @NamedQuery(name = "Image.findById", query = "SELECT i FROM Image i WHERE i.id = :id"),
     @NamedQuery(name = "Image.findByImage", query = "SELECT i FROM Image i WHERE i.image = :image"),

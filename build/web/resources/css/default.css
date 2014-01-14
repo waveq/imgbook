@@ -1,5 +1,5 @@
 body {
-    background-color: #ffffff;
+    background-color: #0f0f0f;
     font-size: 12px;
     font-family: Verdana, "Verdana CE",  Arial, "Arial CE", "Lucida Grande CE", lucida, "Helvetica CE", sans-serif;
     color: #000000;  
@@ -22,17 +22,14 @@ h1 {
     font-weight: bold;
     margin: 0px;
     padding: 0px;
-    color: #0000cc;
+    color: white;
 }
 
 a:link, a:visited {
-  color: white;
-  font-weight : bold;
-  text-decoration: none;
+
 }
 
 a:link:hover, a:visited:hover  {
-  color: black;
-  font-weight : bold;
-  text-decoration : none;
+
 }
+
