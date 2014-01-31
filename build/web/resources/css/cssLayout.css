@@ -81,8 +81,6 @@
     height: 100px;
 }
 
-
-
 .commentButton:hover {
     background-image: url("../resources/images/commenthover2.png");
     display:inline-block;

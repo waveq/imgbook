@@ -16,7 +16,7 @@
                 <h:panelGroup id="imageInRepeat" >
                     <div id="titleBox" class="titleBox" >
                         <h:form style="margin:0; padding:0;">
-                            <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
+                            
                             <p:commandLink styleClass="commentButton" 
                                            action="image?faces-redirect=true&amp;includeViewParams=true" >
                                 <f:setPropertyActionListener target="#{imageBean.passedId}" value="#{image.id}" />
@@ -45,6 +45,9 @@
                                     <f:param name="imageID" value="#{image.id}" />
                                     <f:param name="plusOrMinus" value="+" />
                                 </p:commandLink> 
+                            </li>
+                            <li>
+                                <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
                             </li>
                             <li>
                                 <p:commandLink styleClass="minus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      

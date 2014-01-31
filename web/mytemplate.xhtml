@@ -18,7 +18,7 @@
                 <ui:insert name="top">
 
                     <h:form id="topButtons" >  
-                           <p:growl id="growl" life="4000"/> 
+                           <p:growl id="template-growl" life="4000"/> 
 
                         <ul> 
                             <li>
@@ -72,7 +72,7 @@
     </h:body>
 
     <h:form id="signInPanelForm" >
-        <p:overlayPanel id="signUpPanel" styleClass="loginSignPanel" for=":topButtons:signInButton" hideEffect="fade"> 
+        <p:overlayPanel id="signUpPanel" styleClass="loginSignPanel" for=":topButtons:signInButton" showEffect="size" hideEffect="size"> 
             <h3>Tworzenie konta</h3>
             <h:panelGrid columns="2" >
                 <p:outputLabel styleClass="inPanelLabel" value="Login:" />
@@ -92,7 +92,7 @@
     </h:form>
 
     <h:form id="logInPanelForm" >
-        <p:overlayPanel id="logInPanel" styleClass="loginSignPanel" for=":topButtons:logInButton" hideEffect="fade">
+        <p:overlayPanel id="logInPanel" styleClass="loginSignPanel" for=":topButtons:logInButton" showEffect="size" hideEffect="size">
 
             <h:panelGroup id="LogInPanel-loggedOut" rendered="#{not userBean.loggedIn}">
                 <h3>Logowanie</h3>
