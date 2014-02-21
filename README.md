@@ -10,6 +10,7 @@ Funkcjonalności to:
 * Logowanie
 * Dodawanie obrazków(po zarejestrowaniu)
 * Dodawanie komentarzy
+* Ocenianie obrazków(+, -)
 
 Aplikacja korzysta z następujących technologii:
 * JSF
