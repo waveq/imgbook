@@ -12,10 +12,12 @@ Funkcjonalności to:
 * Dodawanie komentarzy
 
 Aplikacja korzysta z następujących technologii:
-
 * JSF
 * JPA
 * EJB 3.1
 * MySQL za pomocą jdbc
 * CDI, BeanValidations
 * Primefaces
+
+Używany serwer to:
+*Glassfish 4.0
