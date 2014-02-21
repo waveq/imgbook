@@ -12,6 +12,11 @@ Funkcjonalności to:
 * Dodawanie komentarzy
 * Ocenianie obrazków(+, -)
 
+Do narzędzi administratorskich należą:
+* Promocja obrazków z poczekalni na stronę główną
+* Usuwanie obrazków
+* Degradacja obrazków ze strony głównej do poczekalni
+
 Aplikacja korzysta z następujących technologii:
 * JSF
 * JPA
