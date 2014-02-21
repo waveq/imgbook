@@ -20,4 +20,4 @@ Aplikacja korzysta z następujących technologii:
 * Primefaces
 
 Używany serwer to:
-*Glassfish 4.0
+* Glassfish 4.0
