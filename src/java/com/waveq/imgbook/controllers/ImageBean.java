@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+import org.primefaces.model.UploadedFile;
 
 /**
  *
@@ -38,12 +39,11 @@ import org.primefaces.model.StreamedContent;
 public class ImageBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    private static final String PATH_FOR_IMAGES = "//resources//uploaded//";
     @Inject
     ImageManager im;
-    
     @Inject
     UserManager um;
-    
     @ManagedProperty(value = "#{userBean.user}")
     private User injectedUser;
     private static final int BUFFER_SIZE = 10124;
@@ -52,8 +52,8 @@ public class ImageBean implements Serializable {
     private String fileName;
     private Image image = new Image();
     private int page = 1;
-    private StreamedContent oneImage = new DefaultStreamedContent();
     private int passedId;
+    private StreamedContent oneImage = new DefaultStreamedContent();
 
     public ImageBean() {
     }
@@ -91,7 +91,7 @@ public class ImageBean implements Serializable {
         image.setImage(fileName);
         image.setAddDate(date);
         image.setRating(0);
-        
+
         // injectedUser without it is null (?)
         injectedUser = um.findByLogin(injectedUser.getLogin());
         image.setUser(injectedUser);
@@ -130,10 +130,17 @@ public class ImageBean implements Serializable {
         return im.simpleMainList();
     }
 
+    /**
+     * Returns image of given name as streamedContent. StreamedContent is type
+     * that is needed by primefaces component that is responsible for displaying
+     * image.
+     *
+     * @param fileName
+     */
     public StreamedContent prepareImageToDisplay(String fileName) {
         ExternalContext extContext = FacesContext.getCurrentInstance()
                 .getExternalContext();
-        String path = extContext.getRealPath("//resources//uploaded//" + fileName);
+        String path = extContext.getRealPath(PATH_FOR_IMAGES + fileName);
         File file = new File(path);
         InputStream stream;
         try {
@@ -146,36 +153,53 @@ public class ImageBean implements Serializable {
         return uploadedImage;
     }
 
+    /**
+     * Streams sent image to resources/uploaded/ (PATH_FOR_IMAGES) by the way it
+     * changes name of the file, if name is already occupied.
+     *
+     * @param event
+     */
     public void handleFileUpload(FileUploadEvent event) {
         ExternalContext extContext = FacesContext.getCurrentInstance()
                 .getExternalContext();
-        File result = new File(extContext.getRealPath("//resources//uploaded//" 
+        File streamDestination = new File(extContext.getRealPath(PATH_FOR_IMAGES
                 + event.getFile().getFileName()));
-        
+
         int i = 0;
         String newName;
-        while (result.length() > 0) {
-            newName = changeName(i, result.getName());
-            result = new File(extContext.getRealPath("//resources//uploaded//" + newName));
+        while (streamDestination.length() > 0) {
+            newName = changeName(i, streamDestination.getName());
+            streamDestination = new File(extContext.getRealPath(PATH_FOR_IMAGES + newName));
             i += 1;
         }
+        stream(streamDestination, event.getFile());
+    }
+
+    /**
+     * Streams fileToStream into streamDestination (/resources/uploaded/ + file
+     * name)
+     *
+     * @param streamDestination
+     * @param fileToStream
+     */
+    private void stream(File streamDestination, UploadedFile fileToStream) {
         try {
             InputStream inputStream;
-            try (FileOutputStream fileOutputStream = new FileOutputStream(result)) {
-                byte[] buffer = new byte[BUFFER_SIZE];
-                int bulk;
-                inputStream = event.getFile().getInputstream();
-                while (true) {
-                    bulk = inputStream.read(buffer);
-                    if (bulk < 0) {
-                        break;
-                    }
-                    fileOutputStream.write(buffer, 0, bulk);
-                    fileOutputStream.flush();
+            FileOutputStream fileOutputStream = new FileOutputStream(streamDestination);
+
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bulk;
+            inputStream = fileToStream.getInputstream();
+            while (true) {
+                bulk = inputStream.read(buffer);
+                if (bulk < 0) {
+                    break;
                 }
+                fileOutputStream.write(buffer, 0, bulk);
+                fileOutputStream.flush();
             }
             inputStream.close();
-            fileName = result.getName();
+            fileName = streamDestination.getName();
             uploaded = true;
 
         } catch (IOException e) {
@@ -205,13 +229,17 @@ public class ImageBean implements Serializable {
         return name;
     }
 
+    /**
+     * Used in ui:repeat returns requested images, finds them thanks to passed
+     * imageID
+     */
     public StreamedContent getImgToRepeat() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
             return new DefaultStreamedContent();
         } else {
-            HttpServletRequest myRequest = 
+            HttpServletRequest myRequest =
                     (HttpServletRequest) context.getExternalContext().getRequest();
             String imageID = (String) myRequest.getParameter("imageID");
 
@@ -220,16 +248,27 @@ public class ImageBean implements Serializable {
         }
     }
 
+    /**
+     * used for image.xhtml
+     */
+    public StreamedContent getOneImage() {
+        this.image = im.find(image.getId());
+        return prepareImageToDisplay(image.getImage());
+    }
+
+    /**
+     * Used after uploading image in addimage.xhtml
+     */
+    public StreamedContent getUploadedImage() {
+        return prepareImageToDisplay(fileName);
+    }
+
     public boolean isUploaded() {
         return uploaded;
     }
 
     public void setUploaded(boolean uploaded) {
         this.uploaded = uploaded;
-    }
-
-    public StreamedContent getUploadedImage() {
-        return prepareImageToDisplay(fileName);
     }
 
     public Image getImage() {
@@ -246,11 +285,6 @@ public class ImageBean implements Serializable {
 
     public void setInjectedUser(User injectedUser) {
         this.injectedUser = injectedUser;
-    }
-
-    public StreamedContent getOneImage() {
-        this.image = im.find(image.getId());
-        return prepareImageToDisplay(image.getImage());
     }
 
     public void setOneImage(StreamedContent oneImage) {
