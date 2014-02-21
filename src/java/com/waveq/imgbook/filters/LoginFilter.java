@@ -16,10 +16,10 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
  
 /**
- * Filter checks if LoginBean has loginIn property set to true.
- * If it is not set then request is being redirected to the login.xhml page.
+ * Filter checks if UserBean has loggedIn property set to true.
+ * If it is not set then request is being redirected to the index.xhml page.
  *
- * @author itcuties
+ * @author Szym
  *
  */
 public class LoginFilter implements Filter {

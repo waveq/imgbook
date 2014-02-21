@@ -29,6 +29,17 @@
     top:0;
 }
 
+#dashboard {
+    width: 70px;
+    background-color: red;
+    padding: 20px 20px 20px 20px;
+    position: absolute;
+    left: -92px;
+    top: 100px;
+    z-index: 100;
+}
+
+
 #bottom {
     position: relative;
     background-color: black;
@@ -257,7 +268,7 @@
 
 .comment {
     font-size: 16px;
-  
+
 }
 
 .commentDescription {
@@ -305,7 +316,7 @@
     border-bottom-left-radius: 7px;
     border-bottom-right-radius: 7px;
     background-color: #0f0f0f;
-    
+
 }
 
 .noCommentBox {

@@ -49,8 +49,5 @@
         <url-pattern>/loggedin/*</url-pattern>
     </filter-mapping> 
     
-    <listener>
-        <description>ServletContextListener</description>
-        <listener-class>com.waveq.imgbook.listeners.ImgBookContextListener</listener-class>
-    </listener>
+   
 </web-app>

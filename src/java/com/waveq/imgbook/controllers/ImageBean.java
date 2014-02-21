@@ -1,11 +1,9 @@
-package com.waveq.imgbook.controllers.imageController;
+package com.waveq.imgbook.controllers;
 
-import com.google.common.collect.Lists;
-import com.waveq.imgbook.config.DBManager;
-import com.waveq.imgbook.entity.Comment;
 import com.waveq.imgbook.entity.Image;
-import com.waveq.imgbook.entity.Rating;
 import com.waveq.imgbook.entity.User;
+import com.waveq.imgbook.service.ImageManager;
+import com.waveq.imgbook.service.UserManager;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,8 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,31 +23,35 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
+
 /**
  *
  * @author Szymon
  */
-@ManagedBean(name="imageBean")
+@ManagedBean(name = "imageBean")
 @SessionScoped
 public class ImageBean implements Serializable {
 
-    @ManagedProperty(value="#{userBean.user}")
+    private static final long serialVersionUID = 1L;
+    @Inject
+    ImageManager im;
+    
+    @Inject
+    UserManager um;
+    
+    @ManagedProperty(value = "#{userBean.user}")
     private User injectedUser;
-    
-    
     private static final int BUFFER_SIZE = 10124;
     private StreamedContent uploadedImage = new DefaultStreamedContent();
     private boolean uploaded;
-    private String fileName; 
+    private String fileName;
     private Image image = new Image();
     private int page = 1;
-    
-
     private StreamedContent oneImage = new DefaultStreamedContent();
     private int passedId;
 
@@ -59,116 +59,83 @@ public class ImageBean implements Serializable {
     }
 
     public void imageListener(ActionEvent ae) {
-        String ids = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("imageID").toString();
+        String ids = FacesContext.getCurrentInstance().getExternalContext()
+                .getRequestParameterMap().get("imageID").toString();
         int id = Integer.parseInt(ids);
         this.image.setId(id);
     }
-    
+
     public String promoteToMain() {
-         this.loadImage();
-         Date date = new Date();
-         image.setMainDate(date);
-         EntityManager em = DBManager.getManager().createEntityManager();
-         em.getTransaction().begin();
-         em.merge(this.image);
-         em.getTransaction().commit();
-         em.close();
-         return null;
-    }
-    
-     public String delete() {
-        this.loadImage();
-        EntityManager em = DBManager.getManager().createEntityManager();
-        em.getTransaction().begin();
-        em.remove(em.merge(this.image));
-        em.getTransaction().commit();
-        em.close();
+        image = im.find(image.getId());
+        Date date = new Date();
+        image.setMainDate(date);
+        im.update(image);
         return null;
     }
-    
+
+    public String downgradeToQueue() {
+        image = im.find(image.getId());
+        image.setMainDate(null);
+        im.update(image);
+        return null;
+    }
+
+    public String delete() {
+        image = im.find(image.getId());
+        im.remove(image);
+        return null;
+    }
+
     public String submit() {
-        EntityManager em = DBManager.getManager().createEntityManager();
         Date date = new Date();
         image.setImage(fileName);
         image.setAddDate(date);
         image.setRating(0);
-        image.setUser(getInjectedUser());
         
-        em.getTransaction().begin();
-        image.setId(null);
-        em.persist(image);
-        em.getTransaction().commit();
-        em.close();
-        this.image = new Image();
+        // injectedUser without it is null (?)
+        injectedUser = um.findByLogin(injectedUser.getLogin());
+        image.setUser(injectedUser);
+        im.submit(image);
+        image = new Image();
         uploaded = false;
-        return null;  
+        return null;
     }
-    
- 
-    
-     public void loadImage() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        this.image = em.find(Image.class, image.getId());
-        em.close();
-    }
-     
-     public void clearBean() {
-         this.image = new Image();
-     }
-     
-      public List<Image> getMainFirstPageList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllOrderByMainDateDESC").setFirstResult(0).setMaxResults(5).getResultList(); 
-        em.close();
-        return list;
-    } 
-      
-      public List<Image> getMainNotFirstPageList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllOrderByMainDateDESC").setFirstResult((page-1)*5).setMaxResults(5).getResultList(); 
-        em.close();
-        return list;
-    } 
-     
-    public List<Image> getQueueFirstPageList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult(0).setMaxResults(5).getResultList(); 
-        em.close();
-        return list;
-    } 
-    
-    public List<Image> getQueueNotFirstPageList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllOrderByDateDESC").setFirstResult((page-1)*5).setMaxResults(5).getResultList(); 
-        em.close();
-        return list;
-    } 
-       
-   
-    
-    public List<Image> getSimpleQueueList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllQueue").getResultList(); 
-        em.close();
-        return list;
-    }
-    
-     public List<Image> getSimpleMainList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List<Image> list = em.createNamedQuery("Image.findAllMain").getResultList(); 
-        em.close();
-        return list;
-    }
-     
-     
 
-    // Adding (0) (1) (2) substring to name of file
-    // ext is extension of the file
+    public void clearBean() {
+        this.image = new Image();
+    }
+
+    // LISTS TO UI:REPEAT
+    public List<Image> getMainFirstPageList() {
+        return im.mainFirstPageList();
+    }
+
+    public List<Image> getMainNotFirstPageList() {
+        return im.mainNotFirstPageList(page);
+    }
+
+    public List<Image> getQueueFirstPageList() {
+        return im.queueFirstPageList();
+    }
+
+    public List<Image> getQueueNotFirstPageList() {
+        return im.queueNotFirstPageList(page);
+    }
+
+    public List<Image> getSimpleQueueList() {
+        return im.simpleQueueList();
+    }
+
+    public List<Image> getSimpleMainList() {
+        return im.simpleMainList();
+    }
+
     public StreamedContent prepareImageToDisplay(String fileName) {
-        ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
+        ExternalContext extContext = FacesContext.getCurrentInstance()
+                .getExternalContext();
         String path = extContext.getRealPath("//resources//uploaded//" + fileName);
         File file = new File(path);
-            InputStream stream;
+        InputStream stream;
         try {
             stream = new FileInputStream(file);
             uploadedImage = new DefaultStreamedContent(stream, "image/jpeg");
@@ -180,8 +147,11 @@ public class ImageBean implements Serializable {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        ExternalContext extContext = FacesContext.getCurrentInstance().getExternalContext();
-        File result = new File(extContext.getRealPath("//resources//uploaded//" + event.getFile().getFileName()));
+        ExternalContext extContext = FacesContext.getCurrentInstance()
+                .getExternalContext();
+        File result = new File(extContext.getRealPath("//resources//uploaded//" 
+                + event.getFile().getFileName()));
+        
         int i = 0;
         String newName;
         while (result.length() > 0) {
@@ -209,10 +179,14 @@ public class ImageBean implements Serializable {
             uploaded = true;
 
         } catch (IOException e) {
-            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR, "Plik nie został wysłany", "");
+            FacesMessage error = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    "Plik nie został wysłany", "");
             FacesContext.getCurrentInstance().addMessage(null, error);
         }
     }
+
+    // Adding (0) (1) (2) substring to name of file
+    // ext is extension of the file
     private String changeName(int count, String name) {
         String ext = "";
         if (count == 0) {
@@ -230,20 +204,18 @@ public class ImageBean implements Serializable {
         }
         return name;
     }
- 
-      public StreamedContent getImgToRepeat() {    
+
+    public StreamedContent getImgToRepeat() {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getCurrentPhaseId() == PhaseId.RENDER_RESPONSE) {
             // So, we're rendering the view. Return a stub StreamedContent so that it will generate right URL.
             return new DefaultStreamedContent();
         } else {
-            HttpServletRequest myRequest = (HttpServletRequest) context.getExternalContext().getRequest();
-            String imageID =  (String) myRequest.getParameter("imageID");
-            
-            EntityManager em = DBManager.getManager().createEntityManager();  
-            
-            image = em.find(Image.class, Integer.parseInt(imageID));
-            em.close();
+            HttpServletRequest myRequest = 
+                    (HttpServletRequest) context.getExternalContext().getRequest();
+            String imageID = (String) myRequest.getParameter("imageID");
+
+            image = im.find(Integer.parseInt(imageID));
             return prepareImageToDisplay(image.getImage());
         }
     }
@@ -257,7 +229,7 @@ public class ImageBean implements Serializable {
     }
 
     public StreamedContent getUploadedImage() {
-        return prepareImageToDisplay(fileName);         
+        return prepareImageToDisplay(fileName);
     }
 
     public Image getImage() {
@@ -277,10 +249,8 @@ public class ImageBean implements Serializable {
     }
 
     public StreamedContent getOneImage() {
-            EntityManager em = DBManager.getManager().createEntityManager();       
-            this.image = em.find(Image.class, image.getId());
-            em.close();
-            return prepareImageToDisplay(image.getImage());
+        this.image = im.find(image.getId());
+        return prepareImageToDisplay(image.getImage());
     }
 
     public void setOneImage(StreamedContent oneImage) {
@@ -292,9 +262,7 @@ public class ImageBean implements Serializable {
     }
 
     public void setPassedId(int passedId) {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        this.image = em.find(Image.class, passedId);
-        em.close();
+        this.image = im.find(passedId);
     }
 
     public int getPage() {
@@ -304,6 +272,4 @@ public class ImageBean implements Serializable {
     public void setPage(int page) {
         this.page = page;
     }
-
-
 }

@@ -35,16 +35,16 @@
                     </div>
                     <div id="ratingBox" class="ratingBox" >
                         <h:form id="rating-form" prependId="false">
-                           <p:growl id="growl" life="4000"/> 
+                            <p:growl id="growl" life="4000"/> 
                             <li>
                                 <p:commandLink styleClass="plus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      
                                     <f:param name="imageID" value="#{image.id}" />
                                     <f:param name="plusOrMinus" value="+" />
                                 </p:commandLink> 
                             </li>
-                           <li>
-                               <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
-                           </li>
+                            <li>
+                                <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
+                            </li>
                             <li>
                                 <p:commandLink styleClass="minus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      
                                     <f:param name="imageID" value="#{image.id}" />
@@ -66,14 +66,23 @@
                     </div>
                 </h:panelGroup>
             </div>
-
+            <!-- admin tools -->
+            <h:form id="downgrade" >
+                <p:commandButton value="Zawróć do poczekalni" ajax="false" action="#{imageBean.downgradeToQueue}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+                <p:commandButton value="Usuń" ajax="false" action="#{imageBean.delete}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+            </h:form>
         </ui:repeat>
+
+
 
         <!-- page buttons -->
         <div id="pageButtonBox" class="pageButtonBox" >
             <h:form>
                 <ui:repeat var="page" value="#{pageBean.mainPageList}">
-
                     <h:commandLink value="#{page.number}" styleClass="pageButton"  action="page?faces-redirect=true&amp;includeViewParams=true" >
                         <f:setPropertyActionListener target="#{imageBean.page}" value="#{page.number}" />
                     </h:commandLink>
@@ -81,9 +90,6 @@
                 </ui:repeat>
             </h:form>
         </div>
-
-
-
 
     </ui:define>
 </ui:composition>

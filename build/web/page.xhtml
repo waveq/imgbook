@@ -48,7 +48,7 @@
                                 </p:commandLink> 
                             </li>
                             <li>
-                               <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
+                                <p:outputLabel value="#{image.rating}" styleClass="ratingSquare"  />
                             </li>   
                             <li>
                                 <p:commandLink styleClass="minus" action="#{ratingBean.rate}"  update="rating-form" actionListener="#{ratingBean.ratingListener}" >                      
@@ -60,7 +60,7 @@
                                 <p:commandLink styleClass="facebook"  >
                                 </p:commandLink> 
                             </li>
-                            
+
                         </h:form>
                     </div>
                     <div id="authorBox" class="authorBox" >
@@ -73,8 +73,19 @@
                 </h:panelGroup>
 
             </div>
+            <!-- admin tools -->
+            <h:form id="downgrade" >
+                <p:commandButton value="Zawróć do poczekalni" ajax="false" action="#{imageBean.downgradeToQueue}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+                <p:commandButton value="Usuń" ajax="false" action="#{imageBean.delete}" rendered="#{userBean.admin}" actionListener="#{imageBean.imageListener}" >
+                    <f:param name="imageID" value="#{image.id}" />
+                </p:commandButton>
+            </h:form>
         </ui:repeat>
-        
+
+
+
         <h:outputText styleClass="noCommentBox" value="Za daleko zabrnąłeś, na tej stronie nie ma obrazków" 
                       rendered="#{empty imageBean.mainNotFirstPageList}" />
 

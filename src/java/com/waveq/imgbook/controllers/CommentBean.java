@@ -3,29 +3,38 @@ package com.waveq.imgbook.controllers;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.persistence.EntityManager;
-import com.waveq.imgbook.config.DBManager;
 import com.waveq.imgbook.entity.Comment;
 import com.waveq.imgbook.entity.Image;
 import com.waveq.imgbook.entity.User;
+import com.waveq.imgbook.service.CommentManager;
+import com.waveq.imgbook.service.ImageManager;
+import com.waveq.imgbook.service.UserManager;
 import java.io.Serializable;
 import java.util.Date;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.RequestScoped;
-import javax.faces.event.ActionEvent;
-
+import javax.inject.Inject;
 
 /**
  *
  * @author Szymon
  */
-@ManagedBean(name="commentBean")
+@ManagedBean(name = "commentBean")
 @SessionScoped
 public class CommentBean implements Serializable {
 
-    @ManagedProperty(value="#{userBean.user}")
+    private static final long serialVersionUID = 1L;
+    @Inject
+    UserManager um;
+    
+    @Inject
+    CommentManager cm;
+    
+    @Inject
+    ImageManager im;
+    
+    @ManagedProperty(value = "#{userBean.user}")
     private User injectedUser;
     private Comment comment = new Comment();
     private Image image = new Image();
@@ -37,40 +46,24 @@ public class CommentBean implements Serializable {
     }
 
     public List<Comment> getList() {
-        EntityManager em = DBManager.getManager().createEntityManager();
-        List list = em.createQuery("from Comment c WHERE c.image.id=:id").setParameter("id", passedImageId).getResultList();
-        em.close();
-        return list;
+        return cm.findByImageId(passedImageId);
     }
 
     public String addComment() {
-        
         Date date = new Date();
-        
-        EntityManager em = DBManager.getManager().createEntityManager();
-        System.out.println("Passed image: "+ passedImageId);
-        System.out.println("Passed user: "+ injectedUser);
-        System.out.println("Date: " + date);
-        System.out.println("Comment content" + comment.getContent());
-        
-        this.image = em.find(Image.class, passedImageId);
+        image = im.find(passedImageId);
+        // injectedUser without it is null (?)
+        injectedUser = um.findByLogin(injectedUser.getLogin());
+        comment.setUser(injectedUser);
+        comment.setImage(image);
+        comment.setAddDate(date);
 
-        this.comment.setUser(injectedUser);
-        this.comment.setImage(this.image);
-        this.comment.setAddDate(date);
-
-        em.getTransaction().begin();
-        comment.setId(null);
-        em.persist(comment);
-        em.getTransaction().commit();
+        cm.addComment(comment);
         this.addGrowl("Dodano komentarz", "");
-        em.close();
-        this.comment = new Comment();
+        comment = new Comment();
         return null;
     }
 
-    
-    
     public void addInformation(String s) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, s, ""));
     }

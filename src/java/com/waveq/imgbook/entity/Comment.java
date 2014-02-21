@@ -32,6 +32,7 @@ import javax.validation.constraints.Size;
     @NamedQuery(name = "Comment.findAll", query = "SELECT c FROM Comment c"),
     @NamedQuery(name = "Comment.findById", query = "SELECT c FROM Comment c WHERE c.id = :id"),
     @NamedQuery(name = "Comment.findByContent", query = "SELECT c FROM Comment c WHERE c.content = :content"),
+    @NamedQuery(name = "Comment.findByImageId", query = "SELECT c FROM Comment c WHERE c.image.id=:id"),
     @NamedQuery(name = "Comment.findByAddDate", query = "SELECT c FROM Comment c WHERE c.addDate = :addDate")})
 public class Comment implements Serializable {
     private static final long serialVersionUID = 1L;
