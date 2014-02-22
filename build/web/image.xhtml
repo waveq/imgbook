@@ -12,49 +12,49 @@
     </f:metadata>
 
     <ui:define name="content">     
-
-
         <div id="bookBox" class="singleBookBox" >
             <div id="singleImageBox" class="singleImageBox" >
                 <h:form style="padding:0; margin:0;">
-                    <p:graphicImage cache="false" value="#{imageBean.oneImage}" width="500px" height="400px" /> 
+                    <p:graphicImage cache="false" value="#{imageBean.oneImage}" 
+                                    width="500px" height="400px" /> 
                 </h:form>
             </div>
             <div id="ratingBox" class="ratingBox" >
-
                 <h:form id="rating-form" style="padding:0; margin:0;">
                     <p:growl id="growl" life="4000"/> 
-
                     <li>
-                        <p:commandLink  styleClass="plus" action="#{ratingBean.rate}" update="@form" actionListener="#{ratingBean.ratingListener}" >
-
+                        <p:commandLink  styleClass="plus" action="#{ratingBean.rate}" 
+                                        update="@form" 
+                                        actionListener="#{ratingBean.ratingListener}" >
                             <f:param name="imageID" value="#{imageBean.image.id}" />
                             <f:param name="plusOrMinus" value="+" />
                         </p:commandLink> 
-
                     </li>
-                    <h:panelGroup id="dupa" >
-                        <p:outputLabel value="#{imageBean.image.rating}" styleClass="imageRatingSquare"  />
+                    <h:panelGroup>
+                        <p:outputLabel value="#{imageBean.image.rating}" 
+                                       styleClass="imageRatingSquare"  />
                     </h:panelGroup>
                     <li>
-                        <p:commandLink styleClass="minus" action="#{ratingBean.rate}" update="rating-form" actionListener="#{ratingBean.ratingListener}" >
-
+                        <p:commandLink styleClass="minus" action="#{ratingBean.rate}" 
+                                       update="rating-form" 
+                                       actionListener="#{ratingBean.ratingListener}" >
                             <f:param name="imageID" value="#{imageBean.image.id}" />
                             <f:param name="plusOrMinus" value="-" />
                         </p:commandLink> 
                     </li>
                     <li>
-                        <p:commandLink styleClass="facebook"  >
-
-                        </p:commandLink> 
+                        <p:commandLink styleClass="facebook" />
                     </li>
                 </h:form>
             </div>
 
             <div id="authorBox" class="authorBox" >
-                <p:outputLabel value="#{imageBean.image.title}" styleClass="imageTitle" />
-                <p:outputLabel value="Dodano przez: #{imageBean.image.user.login}" styleClass="imageDescription" /> 
-                <p:outputLabel value="#{imageBean.image.addDate}" styleClass="imageDescription" >
+                <p:outputLabel value="#{imageBean.image.title}" 
+                               styleClass="imageTitle" />
+                <p:outputLabel value="Dodano przez: #{imageBean.image.user.login}" 
+                               styleClass="imageDescription" /> 
+                <p:outputLabel value="#{imageBean.image.addDate}" 
+                               styleClass="imageDescription" >
                     <f:convertDateTime type="date" pattern="dd-MM-yyyy" />
                 </p:outputLabel>
             </div>
@@ -67,22 +67,30 @@
 
                 <ui:repeat var="comment" value="#{commentBean.list}" >
                     <div id="singleComment" class="singleComment"> 
-                        <h:outputText value="#{comment.content}" styleClass="comment" /><br /><br/>
-                        <h:outputText value="Dodano przez: #{comment.user.login} "  styleClass="commentDescription" />
-                        <p:outputLabel value="#{comment.addDate}" styleClass="commentDescription" >
+                        <h:outputText value="#{comment.content}" styleClass="comment" />
+                        <br /><br/>
+                        <h:outputText value="Dodano przez: #{comment.user.login} "  
+                                      styleClass="commentDescription" />
+                        <p:outputLabel value="#{comment.addDate}" 
+                                       styleClass="commentDescription" >
                             <f:convertDateTime type="date" pattern="dd-MM-yyyy"/>
                         </p:outputLabel>
                     </div>
 
                 </ui:repeat>
 
-                <h:outputText styleClass="noCommentBox" value="Jeszcze nikt tego nie skomentował. Bądź pierwszy!" rendered="#{empty commentBean.list}" />
+                <h:outputText styleClass="noCommentBox" 
+                              value="Jeszcze nikt tego nie skomentował. Bądź pierwszy!" 
+                              rendered="#{empty commentBean.list}" />
 
 
                 <h:panelGrid rendered="#{userBean.loggedIn}" columns="1">
                     <h1>Dodaj komentarz</h1>
-                    <p:inputTextarea id="comment" value="#{commentBean.comment.content}" required="true" rows="5" cols="50" />  
-                    <p:commandButton id="add-comment-button" styleClass="inPanelButton" value="Dodaj komentarz" update="comment-form" action="#{commentBean.addComment}" />
+                    <p:inputTextarea id="comment" value="#{commentBean.comment.content}" 
+                                     required="true" rows="5" cols="50" />  
+                    <p:commandButton id="add-comment-button" styleClass="inPanelButton" 
+                                     value="Dodaj komentarz" update="comment-form" 
+                                     action="#{commentBean.addComment}" />
                 </h:panelGrid>
 
                 <h:panelGroup rendered="#{not userBean.loggedIn}" >

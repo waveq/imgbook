@@ -8,7 +8,8 @@
 
     <ui:define name="content">
         <div id="addBox" class="addBox" >
-            <p:outputLabel value="Dodawanie obrazka" styleClass="title"  /><br /><br />
+            <p:outputLabel value="Dodawanie obrazka" styleClass="title"/>
+            <br /><br />
 
             <h:panelGroup id="block">
                 <h:panelGroup rendered="#{not imageBean.uploaded}">
@@ -23,28 +24,28 @@
                                       invalidSizeMessage="Maksymalny rozmiar obrazka to 0.5MB!"
                                       invalidFileMessage="Możesz przesłać tylko obrazki !"
                                       style="background-color: orange; color: orange;"
-
                                       />
                         <p:growl id="messages" showDetail="true" life="5000" />
-
                     </h:form>
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{imageBean.uploaded}">
                     <h:form>
-
-                        <p:outputLabel value="Tytuł: " style="font-size: 20px; color: white; " />
-                        <p:inputText id="title" value="#{imageBean.image.title}" required="true" /> <br/>
-
-
-                        <p:graphicImage cache="false" value="#{imageBean.uploadedImage}" width="400px" height="300px"/> <br />
-                        <p:commandButton value="OK" ajax="true" action="#{imageBean.submit}" update=":block" style="width: 400px;" />  
-
+                        <p:outputLabel value="Tytuł: " style="font-size: 20px; 
+                                       color: white; " />
+                        <p:inputText id="title" value="#{imageBean.image.title}" 
+                                     required="true" /> 
+                        <br/>
+                        <p:graphicImage cache="false" 
+                                        value="#{imageBean.uploadedImage}" 
+                                        width="400px" height="300px"/> 
+                        <br />
+                        <p:commandButton value="OK" ajax="true" 
+                                         action="#{imageBean.submit}" 
+                                         update=":block" style="width: 400px;" />  
                     </h:form>
                 </h:panelGroup>
-
             </h:panelGroup>
-
         </div>
     </ui:define>
 

@@ -17,24 +17,26 @@
         <div id="top_container" class="top_container">
             <div id="top" class="top">
                 <ui:insert name="top">
-
                     <h:form id="topButtons" >  
-
                         <ul> 
                             <li>
-                                <p:commandLink value="ImageBook" id="logoButton" action="#{navigationBean.redirectToIndex}" />    
+                                <p:commandLink value="ImageBook" id="logoButton" 
+                                               action="#{navigationBean.redirectToIndex}" />    
                             </li> 
                             <li>
-                                <p:commandLink value="HOT" action="index?faces-redirect=true" />    
+                                <p:commandLink value="HOT" 
+                                               action="index?faces-redirect=true" />    
                             </li>
 
                             <li>
-                                <p:commandLink value="DODAJ" id="addButton" action="#{navigationBean.redirectToAddImage}" 
+                                <p:commandLink value="DODAJ" id="addButton" 
+                                               action="#{navigationBean.redirectToAddImage}" 
                                                actionListener="#{imageBean.clearBean}" />    
                             </li>
 
                             <li>
-                                <p:commandLink value="KOLEJKA" id="queueButton" action="#{navigationBean.redirectToQueue}" />    
+                                <p:commandLink value="KOLEJKA" id="queueButton" 
+                                               action="#{navigationBean.redirectToQueue}" />    
                             </li> 
                             <h:panelGroup id="login" rendered="#{not userBean.loggedIn}" >
                                 <li>
@@ -47,11 +49,13 @@
                                 </h:panelGroup>
 
                                 <h:form id="logOut" rendered="#{userBean.loggedIn}">
-                                    <p:commandLink  action="#{userBean.doLogout}" id="logoutButton" value="WYLOGUJ" />
+                                    <p:commandLink  action="#{userBean.doLogout}" 
+                                                    id="logoutButton" value="WYLOGUJ" />
                                 </h:form>
                             </li>
                             <li>
-                                <h:panelGroup id="welcome-username" rendered="#{userBean.loggedIn}" >
+                                <h:panelGroup id="welcome-username" 
+                                              rendered="#{userBean.loggedIn}" >
                                     WITAJ #{userBean.user.login}
                                 </h:panelGroup>
                             </li>
@@ -71,47 +75,63 @@
         
         <div id="dashboard">
             <h:form>
-                <p:commandButton value="Zmień CSS" ajax="false" action="#{layoutBean.changeCss()}" />
+                <p:commandButton value="Zmień CSS" ajax="false" 
+                                 action="#{layoutBean.changeCss()}" />
             </h:form>
         </div>
 
     </h:body>
 
     <h:form id="signInPanelForm" >
-        <p:overlayPanel id="signUpPanel" styleClass="loginSignPanel" for=":topButtons:signInButton" showEffect="size" hideEffect="size"> 
+        <p:overlayPanel id="signUpPanel" styleClass="loginSignPanel" 
+                        for=":topButtons:signInButton" showEffect="size" 
+                        hideEffect="size"> 
             <h3>Tworzenie konta</h3>
             <h:panelGrid columns="2" >
                 <p:outputLabel styleClass="inPanelLabel" value="Login:" />
-                <p:inputText id="login" value="#{userBean.user.login}" required="true" />
+                <p:inputText id="login" value="#{userBean.user.login}" 
+                             required="true" />
 
                 <p:outputLabel styleClass="inPanelLabel" value="Email:" />
-                <p:inputText id="email" value="#{userBean.user.email}" required="true" />
+                <p:inputText id="email" value="#{userBean.user.email}" 
+                             required="true" />
 
-                <p:outputLabel styleClass="inPanelLabel" for="pwd1" value="Hasło:" />  
-                <p:password id="pwd1" value="#{userBean.user.password}" match="pwd2" label="Password 1" required="true">  
+                <p:outputLabel styleClass="inPanelLabel" for="pwd1" 
+                               value="Hasło:" />  
+                <p:password id="pwd1" value="#{userBean.user.password}" 
+                            match="pwd2" label="Password 1" required="true">  
                     <f:validator validatorId="com.waveq.imgbook.validators.PasswordValidator" />
                 </p:password>
  
-                <p:outputLabel styleClass="inPanelLabel" for="pwd2" value="Powtórz hasło:" />  
-                <p:password id="pwd2" value="#{userBean.user.password}" label="Password 2" required="true"/> 
+                <p:outputLabel styleClass="inPanelLabel" for="pwd2" 
+                               value="Powtórz hasło:" />  
+                <p:password id="pwd2" value="#{userBean.user.password}" 
+                            label="Password 2" required="true"/> 
             </h:panelGrid>
-            <p:commandButton styleClass="inPanelButton" ajax="false" id="createAccountButton" action="#{userBean.create}" value="Stwórz konto" />
+            <p:commandButton styleClass="inPanelButton" ajax="false" 
+                             id="createAccountButton" action="#{userBean.create}"
+                             value="Stwórz konto" />
         </p:overlayPanel> 
     </h:form>
 
     <h:form id="logInPanelForm" >
-        <p:overlayPanel id="logInPanel" styleClass="loginSignPanel" for=":topButtons:logInButton" showEffect="size" hideEffect="size">
-
-            <h:panelGroup id="LogInPanel-loggedOut" rendered="#{not userBean.loggedIn}">
+        <p:overlayPanel id="logInPanel" styleClass="loginSignPanel" 
+                        for=":topButtons:logInButton" showEffect="size" 
+                        hideEffect="size">
+            <h:panelGroup id="LogInPanel-loggedOut" 
+                          rendered="#{not userBean.loggedIn}">
                 <h3>Logowanie</h3>
                 <h:panelGrid columns="2" >
                     <p:outputLabel styleClass="inPanelLabel" value="Login:" />
-                    <p:inputText id="login" value="#{userBean.user.login}" required="true" />
+                    <p:inputText id="login" value="#{userBean.user.login}" 
+                                 required="true" />
 
                     <p:outputLabel styleClass="inPanelLabel" value="Hasło:" />
-                    <p:password id="password" value="#{userBean.user.password}" required="true" />
+                    <p:password id="password" value="#{userBean.user.password}" 
+                                required="true" />
                 </h:panelGrid>
-                <p:commandButton action="#{userBean.doLogin}"  ajax="false" id="logInButton" value="Zaloguj" />
+                <p:commandButton action="#{userBean.doLogin}"  ajax="false" 
+                                 id="logInButton" value="Zaloguj" />
             </h:panelGroup>
         </p:overlayPanel>
     </h:form>

@@ -8,9 +8,11 @@ ImgBook jest to aplikacja webowa, która ma być javowym odpowiednikiem stron ty
 Funkcjonalności to:
 * Rejestracja
 * Logowanie
-* Dodawanie obrazków(po zarejestrowaniu)
-* Dodawanie komentarzy
-* Ocenianie obrazków(+, -)
+* Podział na stronę główną oraz poczekalnie
+* Dodawanie obrazków(po zalogowaniu)
+* Dodawanie komentarzy(po zalogowaniu)
+* Ocenianie obrazków(+, -)(po zalogowaniu)
+* Generowanie linku do pojedynczego obrazka(image.xhtml), oraz do poszczególnych stron strony głównej(page.xhtml) oraz poczekalni(pageQueue.xhtml)
 
 Do narzędzi administratorskich należą:
 * Promocja obrazków z poczekalni na stronę główną
@@ -24,6 +26,8 @@ Aplikacja korzysta z następujących technologii:
 * MySQL za pomocą jdbc
 * CDI, BeanValidations
 * Primefaces
+
+W folderze Screenshots znajdują się screeny z aplikacji.
 
 Używany serwer to:
 * Glassfish 4.0
