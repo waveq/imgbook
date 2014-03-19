@@ -31,3 +31,5 @@ W folderze Screenshots znajdują się screeny z aplikacji.
 
 Używany serwer to:
 * Glassfish 4.0
+
+![alt tag](https://raw.github.com/waveq/imgbook/master/Screenshots/1.jpg)
